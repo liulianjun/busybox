@@ -223,6 +223,7 @@ enum {
 	OPT_n = (1 << 1),
 	OPT_b = (1 << 2),
 	OPT_m = (1 << 3),
+	OPT_p = (1 << 5), //add the option
 	OPT_EOF = (1 << 4), /* pseudo: "we saw EOF in stdin" */
 };
 #define OPT_BATCH_MODE (option_mask32 & OPT_b)
@@ -1096,7 +1097,9 @@ int top_main(int argc UNUSED_PARAM, char **argv)
 	unsigned col;
 	unsigned interval;
 	char *str_interval, *str_iterations;
+
 	unsigned scan_mask = TOP_MASK;
+	scan_mask ^= PSSCAN_TASKS;//add this line in order to the default setting shows the threads,llj
 
 	INIT_G();
 
@@ -1111,7 +1114,9 @@ int top_main(int argc UNUSED_PARAM, char **argv)
 
 	/* all args are options; -n NUM */
 	opt_complementary = "-"; /* options can be specified w/o dash */
-	col = getopt32(argv, "d:n:b"IF_FEATURE_TOPMEM("m"), &str_interval, &str_iterations);
+
+	/*add a option -p,  in order to assign a process*/
+	col = getopt32(argv, "d:n:b:p"IF_FEATURE_TOPMEM("m"), &str_interval, &str_iterations);
 #if ENABLE_FEATURE_TOPMEM
 	if (col & OPT_m) /* -m (busybox specific) */
 		scan_mask = TOPMEM_MASK;
